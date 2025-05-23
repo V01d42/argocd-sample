@@ -1,0 +1,4 @@
+targetRevision: main
+
+valuesFile:
+  - values-dev.yaml
