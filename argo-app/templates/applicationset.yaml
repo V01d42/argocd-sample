@@ -17,7 +17,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: gitURL
+        repoURL: https://github.com/V01d42/argocd-sample
         targetRevision: {{ .Values.targetRevision }}
         path: '{{path}}'
         helm:
