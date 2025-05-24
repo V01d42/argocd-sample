@@ -3,8 +3,12 @@ kind: Cluster
 nodes:
 - role: control-plane
   extraPortMappings:
-  - containerPort: 31000 #30000 - 32767
+  - containerPort: 8080
     hostPort: 8080
+  - containerPort: 30080
+    hostPort: 30080
+  - containerPort: 31000
+    hostPort: 31000
 - role: worker
 - role: worker
 - role: worker
