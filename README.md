@@ -1,7 +1,7 @@
 # ArgoCD Sample Project
 
-このプロジェクトは、ArgoCDを使用したKubernetesアプリケーションのデプロイメントサンプルです。
-Kindクラスター上でArgoCDをセットアップし、ArgoCDでサンプルアプリケーションとしてPrometheusとGrafanaをdeployする方法を示しています。
+このプロジェクトは、ArgoCDのApplicationSetを使用したデプロイメントサンプルです。
+Kindクラスター上でArgoCDをセットアップし、ArgoCDでサンプルアプリケーションとしてPrometheusとGrafanaをdeployしています。
 
 ## プロジェクト構成
 
@@ -26,27 +26,32 @@ Kindクラスター上でArgoCDをセットアップし、ArgoCDでサンプル�
 ## セットアップ手順
 
 1. Kindクラスターの作成（kind環境のみ）
-   ```bash
-   ./cluster-setup.sh
-   ```
+```bash
+./cluster-setup.sh
+```
 
 2. ArgoCDのインストール
-   ```bash
-   k create ns argocd
-   helm install argocd 
-   ```
+```bash
+k create ns argocd
+helm install argocd 
+```
 
 3. PrometheusとGrafanaのデプロイ
-   ```
-   k create ns prometheus
-   k create ns grafana
-   helm install argo-app charts/argo-app
-   ```
+```bash
+k create ns prometheus
+k create ns grafana
+helm install argo-app charts/argo-app
+```
 
 ## アクセス情報
-
 - ArgoCD UI: http://localhost:30080
 - Grafana: http://localhost:31000
+
+Grafanaのusernameは`admin`、passwordも`admin`です。
+ArgoCDのusernameは`admin`、passwordは以下のコマンドから確認してください。
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
 
 ## 注意事項
 
