@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: application-set
+  namespace: {{ .Release.Namespace }}
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - list:
+      elements:
+      - cluster: https://kubernetes.default.svc
+        repoURL: https://prometheus-community.github.io/helm-charts
+        repoRevision: 27.16.0
+        path: prometheus
+      - cluster: https://kubernetes.default.svc
+        repoURL: https://grafana.github.io/helm-charts
+        repoRevision: 9.2.0
+        path: grafana
+  template:
+    metadata:
+      name: '{{ .path }}'
+    spec:
+      project: default
+      sources:
+      - repoURL: '{{ .repo }}'
+        chart: '{{ .path }}'
+        targetRevision: '{{ .repoRevision }}'
+        helm:
+          valueFiles:
+            - '$values/charts/{{ .path }}/values.yaml'
+      - repoURL: https://github.com/V01d42/argocd-sample
+        targetRevision: '{{ .Values.targetRevision }}'
+        ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ .path }}'
+      syncPolicy:
+        automated: {}
