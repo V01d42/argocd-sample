@@ -33,14 +33,14 @@ Kindクラスター上でArgoCDをセットアップし、ArgoCDでサンプル�
 2. ArgoCDのインストール
 ```bash
 k create ns argocd
-helm install argocd 
+helm install -n argocd argocd argo/argo-cd -f ./charts/argocd/values.yaml
 ```
 
 3. PrometheusとGrafanaのデプロイ
 ```bash
 k create ns prometheus
 k create ns grafana
-helm install argo-app charts/argo-app
+helm install -n argocd argo-app ./charts/argo-app/ -f ./charts/argo-app/values.yaml
 ```
 
 ## アクセス情報
