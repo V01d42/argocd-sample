@@ -14,6 +14,7 @@ applicationSet:
   
   defaults:
     cluster: https://kubernetes.default.svc
+    valuesFile: values.yaml
   
   applications:
     - name: prometheus
@@ -28,6 +29,3 @@ applicationSet:
       repoRevision: 9.2.0
       path: grafana
       namespace: grafana
-
-valuesFile:
-  - values.yaml

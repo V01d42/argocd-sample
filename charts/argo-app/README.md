@@ -35,6 +35,8 @@ helm upgrade argo-app-dev ./charts/argo-app -f ./charts/argo-app/values-dev.yaml
 | `applicationSet.valueSourceRepo.targetRevision` | ソースリポジトリのRevision | `main` |
 | `applicationSet.syncPolicy` | syncPolicy | AutoSync等 |
 | `applicationSet.defaults` | デフォルト設定 | Cluster URL等 |
+| `applicationSet.defaults.cluster` | デフォルトのクラスターURL | `https://kubernetes.default.svc` |
+| `applicationSet.defaults.valuesFile` | デフォルトのvaluesファイル名 | `values.yaml` or `values-dev.yaml` |
 | `applicationSet.applications` | アプリケーションの配列 | 各種Helm Chart |
 
 ### Application Setting

@@ -10,19 +10,21 @@ spec:
   - list:
       elements:
       {{- range .Values.applicationSet.applications }}
-      - cluster: {{ .cluster | default $.Values.applicationSet.defaults.cluster }}
+      - name: {{ .name }}
+        cluster: {{ .cluster | default $.Values.applicationSet.defaults.cluster }}
         repoURL: {{ .repoURL }}
         chart: {{ .chart }}
         repoRevision: {{ .repoRevision }}
         path: {{ .path }}
         namespace: {{ .namespace }}
+        valuesFile: {{ $.Values.applicationSet.defaults.valuesFile }}
         {{- if .values }}
         values: {{ .values | toYaml | nindent 10 }}
         {{- end }}
       {{- end }}
   template:
     metadata:
-      name: '{{`{{ .path }}`}}'
+      name: '{{`{{ .name }}`}}'
       {{- if .Values.applicationSet.labels }}
       labels:
         {{- toYaml .Values.applicationSet.labels | nindent 8 }}
@@ -39,7 +41,7 @@ spec:
         targetRevision: '{{`{{ .repoRevision }}`}}'
         helm:
           valueFiles:
-            - '{{`$values/charts/{{ .path }}/values.yaml`}}'
+            - '{{`$values/charts/{{ .path }}/{{ .valuesFile }}`}}'
       - repoURL: {{ .Values.applicationSet.valueSourceRepo.url }}
         targetRevision: '{{ .Values.applicationSet.valueSourceRepo.targetRevision }}'
         ref: {{ .Values.applicationSet.valueSourceRepo.ref }}
