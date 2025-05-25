@@ -5,5 +5,3 @@ server:
 alertmanager:
   persistence:
     enabled: false
-
-forceNamespace: prometheus
