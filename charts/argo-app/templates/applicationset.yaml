@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: application-set
+  name: {{ .Values.applicationSet.name }}
   namespace: {{ .Release.Namespace }}
 spec:
   goTemplate: true
@@ -9,21 +9,30 @@ spec:
   generators:
   - list:
       elements:
-      - cluster: https://kubernetes.default.svc
-        repoURL: https://prometheus-community.github.io/helm-charts
-        chart: prometheus
-        repoRevision: 27.16.0
-        path: prometheus
-      - cluster: https://kubernetes.default.svc
-        repoURL: https://grafana.github.io/helm-charts
-        chart: grafana
-        repoRevision: 9.2.0
-        path: grafana
+      {{- range .Values.applicationSet.applications }}
+      - cluster: {{ .cluster | default $.Values.applicationSet.defaults.cluster }}
+        repoURL: {{ .repoURL }}
+        chart: {{ .chart }}
+        repoRevision: {{ .repoRevision }}
+        path: {{ .path }}
+        namespace: {{ .namespace }}
+        {{- if .values }}
+        values: {{ .values | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
   template:
     metadata:
       name: '{{`{{ .path }}`}}'
+      {{- if .Values.applicationSet.labels }}
+      labels:
+        {{- toYaml .Values.applicationSet.labels | nindent 8 }}
+      {{- end }}
+      {{- if .Values.applicationSet.annotations }}
+      annotations:
+        {{- toYaml .Values.applicationSet.annotations | nindent 8 }}
+      {{- end }}
     spec:
-      project: default
+      project: {{ .Values.applicationSet.project }}
       sources:
       - repoURL: '{{`{{ .repoURL }}`}}'
         chart: '{{`{{ .chart }}`}}'
@@ -31,11 +40,13 @@ spec:
         helm:
           valueFiles:
             - '{{`$values/charts/{{ .path }}/values.yaml`}}'
-      - repoURL: https://github.com/V01d42/argocd-sample
-        targetRevision: '{{ .Values.targetRevision }}'
-        ref: values
+      - repoURL: {{ .Values.applicationSet.valueSourceRepo.url }}
+        targetRevision: '{{ .Values.applicationSet.valueSourceRepo.targetRevision }}'
+        ref: {{ .Values.applicationSet.valueSourceRepo.ref }}
       destination:
-        server: https://kubernetes.default.svc
-        namespace: '{{`{{ .path }}`}}'
+        server: '{{`{{ .cluster }}`}}'
+        namespace: '{{`{{ .namespace }}`}}'
       syncPolicy:
-        automated: {}
+        {{- with .Values.applicationSet.syncPolicy }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}

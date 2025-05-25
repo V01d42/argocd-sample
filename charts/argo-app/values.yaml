@@ -1,4 +1,33 @@
-targetRevision: main
+applicationSet:
+  name: application-set
+  project: default
+  valueSourceRepo:
+    url: https://github.com/V01d42/argocd-sample
+    ref: values
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  
+  defaults:
+    cluster: https://kubernetes.default.svc
+  
+  applications:
+    - name: prometheus
+      repoURL: https://prometheus-community.github.io/helm-charts
+      chart: prometheus
+      repoRevision: 27.16.0
+      path: prometheus
+      namespace: prometheus
+    - name: grafana
+      repoURL: https://grafana.github.io/helm-charts
+      chart: grafana
+      repoRevision: 9.2.0
+      path: grafana
+      namespace: grafana
 
 valuesFile:
   - values.yaml
